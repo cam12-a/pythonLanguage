@@ -5,6 +5,7 @@ def isStrongPassword(textToVerify):
 	z=re.findall("[0-9]",textToVerify)
 	t=re.findall("['!\"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~']",textToVerify)
 	b=0
+	textToReturn=""
 	if x:
 		b+=1
 	if y:
@@ -14,9 +15,10 @@ def isStrongPassword(textToVerify):
 	if t:
 		b+=1
 	if b==4:
-		print("Strong password")
+		textToReturn="Strong password"
 	elif b>1 and b<=3:
-		print("medium password")
+		textToReturn="medium password"
 	else:
-		print("Low password")
-isStrongPassword("мар21.")
+		textToReturn="Low password"
+	return textToReturn
+print(isStrongPassword("мар21."))
