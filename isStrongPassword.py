@@ -121,7 +121,7 @@ def fileTask(fileName):
 	data=fileContent[34:].split('\n')
 	for i in range(len(data)-1):
 		if(data[i][:].split(',')[1]!=" " and data[i][:].split(',')[2]!=" "):
-			if (data[i][:].split(',')[3]!=" "):
+			if (data[i][:].split(',')[3]!=" " and len(data[i][:].split(',')[3])==8):
 				#print(email_gen([[data[i][:].split(',')[1].replace(" ", ""),data[i][:].split(',')[2].replace(" ", "")]])[0])
 				tempData+=email_gen([[data[i][:].split(',')[1].replace(" ", ""),data[i][:].split(',')[2].replace(" ", "")]])[0]+data[i][:]+"\n"
 			else:
