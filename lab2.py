@@ -1,4 +1,5 @@
 import re
+from random import randint
 class lab2:
     openText=""
     data=""
@@ -43,8 +44,10 @@ class lab2:
                     continue
         return textCipher
     def vigener(self,key):
+        key=key+self.openText
         key=self.normalizeKey(key)
         key=key.upper()
+        #print("Ключ Виженера",key)
         textCipher=""
         for i in range(len(self.openText)):
             #print(self.alphabet.index(key[i]),self.alphabet.index(self.openText[i]))
@@ -60,7 +63,7 @@ class lab2:
                 new_key+=key[i%len(key)]
             key=new_key
         return key
-    def descriptVegener(self,textCipher,key):
+    def descriptBelazo(self,textCipher,key):
         textOrigine=""
         key=self.normalizeKey(key)
         key=key.upper()
@@ -74,12 +77,34 @@ class lab2:
         for i in range(len(textCipher)):
             textOrigin+=self.alphabet[(self.alphabet.index(textCipher[i])-i)%32]
         return textOrigin
-    def cryptoAnalyseVegenere(self,textCipher):
-        return 'fsdgf'
-crypt=lab2('crypto/variant.txt')
+    def decodeVegener(self,textCipher,key):
+        textOrigine=""
+        key+=self.openText
+        key=self.normalizeKey(key)
+        key=key.upper()
+        textCipher=textCipher.upper()
+        for i in range(len(textCipher)):
+            textOrigine+=self.alphabet[(self.alphabet.index(textCipher[i])-self.alphabet.index(key[i]))%32]
+        return textOrigine
+    def encodeVegenere(self,key):
+        key=self.openText
+        gama=self.vigener(key)
+        #print(gama)
+        #print(t0)
+        textCipher=""
+        for i in range(len(self.openText)):
+            textCipher+=self.alphabet[(self.alphabet.index(gama[i])-self.alphabet.index(self.openText[i]))%32]
+        return textCipher
+
+crypt=lab2('/home/kali/crypto/variant.txt')
+key=[chr(i) for i in range(ord('А'), ord('Я')+1)][randint(0,31)]
 print("Encryption by Tritemy "+crypt.tritemy())
 print("Origine text Tritemy "+crypt.decodeTextTritemy(crypt.tritemy()))
 print("Encryption by belazo "+crypt.belazo('ЗОНД'))
-print("Encryption by vegenere "+crypt.vigener('ЗОНД'))
-print("Origine text vegenere and Belazo "+crypt.descriptVegener(crypt.vigener('ЗОНД'),'ЗОНД'))
+print("Origine text Belazo "+crypt.descriptBelazo(crypt.belazo('ЗОНД'),'ЗОНД'))
+print("Encryption by vegenere "+crypt.vigener(key))
+print("Origine text vegenere "+crypt.decodeVegener(crypt.vigener(key),key))
+print("Encryption by 2 vegenere "+crypt.encodeVegenere(key))
+
+
 
