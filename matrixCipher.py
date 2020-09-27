@@ -5,11 +5,12 @@ import math as mt
 import re
 class matrixCipher:
 
-    def __init__(self,opentext,matrixSize,key):
-        self.opentext=opentext.lower()
+    def __init__(self,fileName,matrixSize,key):
+        with open(fileName, 'r') as file:
+            self.opentext = file.read().replace('\n', '')
+        self.opentext=self.opentext.lower()
         self.opentext = re.sub(r'[^\w\s]', '', self.opentext)
         self.opentext=self.opentext.replace(" ","")
-        print(self.opentext)
         self.matrixSize=matrixSize
         self.key=key
         self.key=[[1,4,8],[3,7,2],[6,9,5]]
@@ -71,7 +72,7 @@ class matrixCipher:
        
 matrixSize=3
 key=[[randint(0,31) for i in range(matrixSize)] for i in range(matrixSize)]
-s=matrixCipher("Тот, кто хочет есть яйца, должен примириться с кудахтаньем",matrixSize,key)
+s=matrixCipher("/home/kali/crypto/text.txt",matrixSize,key)
 inscrpited=s.matrixCipher()
 print("Encoding text \n",inscrpited[1])
 print("Decoded text\n",s.decodeMatrixCipher(inscrpited[1],inscrpited[0]))
