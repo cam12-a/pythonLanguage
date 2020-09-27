@@ -2,10 +2,14 @@ import numpy as np
 from random import randint
 from numpy import linalg as LA
 import math as mt
+import re
 class matrixCipher:
 
     def __init__(self,opentext,matrixSize,key):
         self.opentext=opentext.lower()
+        self.opentext = re.sub(r'[^\w\s]', '', self.opentext)
+        self.opentext=self.opentext.replace(" ","")
+        print(self.opentext)
         self.matrixSize=matrixSize
         self.key=key
         self.key=[[1,4,8],[3,7,2],[6,9,5]]
@@ -21,52 +25,45 @@ class matrixCipher:
         for i in range(self.matrixSize):
             for j in range(self.matrixSize):
                 C[i]+=Key[i][j]*B[k][j]
-            C[i]=int(C[i])%32
+            #C[i]=int(C[i])%32
         return C
 
     def matrixCipher(self):
-        B=[]
-        print(self.opentext)
-        C=[]
+        B,C=[],[]
         if(len(self.opentext)%self.matrixSize==0):
             for i in range(0,len(self.opentext),self.matrixSize):
                 B.append(self.indexofOpenTextinAphabet(self.opentext)[i:self.matrixSize+i])
         else:
             return "Невозможно шифровать потому что длина открытого теста и размер матрицы некратны"
         cipherText=""
-        print("Code cipherText ",B)
-        print("Key in encode ",self.key)
         for k in range(len(self.opentext)//self.matrixSize):
             C.append(self.multmat(self.key,B,k))
-        print("C ",C)
         for i in range(len(C)):
             for j in range(self.matrixSize):
                 cipherText+=self.alphabet()[(C[i][j])%32]
-        return cipherText
+        
+        return [C,cipherText]
 
-    def decodeMatrixCipher(self,textToDecode):
-        #det=np.array(self.key)
+    def decodeMatrixCipher(self,textToDecode,codeCipherText):
         cipherText=""
         self.opentext=textToDecode
         key=np.array(self.key)
-        print("Key in decode ",key)
-        invKey=LA.inv(key)
-        for i in range(self.matrixSize):
-            for j in range(self.matrixSize):
-                invKey[i][j]=invKey[i][j]%32
-        print("Inversed key",invKey)
-        print(self.opentext)
-        B=[]
-        C=[]
+        try:
+            invKey=LA.inv(key)
+        except np.linalg.LinAlgError:
+            return "Данная матрица не имеет обратную матрицу"
+        B,C=[],[]
         if(len(self.opentext)%self.matrixSize==0):
             for i in range(0,len(self.opentext),self.matrixSize):
                 B.append(self.indexofOpenTextinAphabet(self.opentext)[i:self.matrixSize+i])
         else:
             return "Невозможно шифровать потому что длина открытого теста и размер матрицы некратны"
-        print("code encoding text ",B)
-        for k in range(len(self.opentext)//self.matrixSize):
-            C.append(self.multmat(invKey,B,k))
-        print("C111 ",C)
+        invKey=invKey.tolist()
+        for i in range(len(codeCipherText)):
+            C.append(self.multmat(invKey,codeCipherText,i))
+        for i in range(len(C)):
+            for j in range(self.matrixSize):
+                C[i][j]=round(C[i][j])
         for i in range(len(C)):
             for j in range(self.matrixSize):
                 cipherText+=self.alphabet()[int(C[i][j])]
@@ -74,8 +71,7 @@ class matrixCipher:
        
 matrixSize=3
 key=[[randint(0,31) for i in range(matrixSize)] for i in range(matrixSize)]
-print("key outup object ",key)
-s=matrixCipher("ЗАБАВА",matrixSize,key)
+s=matrixCipher("Тот, кто хочет есть яйца, должен примириться с кудахтаньем",matrixSize,key)
 inscrpited=s.matrixCipher()
-print(inscrpited)
-print(s.decodeMatrixCipher(inscrpited))
+print("Encoding text \n",inscrpited[1])
+print("Decoded text\n",s.decodeMatrixCipher(inscrpited[1],inscrpited[0]))

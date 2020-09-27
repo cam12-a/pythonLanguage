@@ -96,7 +96,7 @@ class lab2:
             textCipher+=self.alphabet[(self.alphabet.index(gama[i])-self.alphabet.index(self.openText[i]))%32]
         return textCipher
 
-crypt=lab2('/home/kali/crypto/variant.txt')
+crypt=lab2('/home/kali/crypto/text.txt')
 key=[chr(i) for i in range(ord('А'), ord('Я')+1)][randint(0,31)]
 print("Encryption by Tritemy "+crypt.tritemy())
 print("Origine text Tritemy "+crypt.decodeTextTritemy(crypt.tritemy()))
@@ -104,7 +104,7 @@ print("Encryption by belazo "+crypt.belazo('ЗОНД'))
 print("Origine text Belazo "+crypt.descriptBelazo(crypt.belazo('ЗОНД'),'ЗОНД'))
 print("Encryption by vegenere "+crypt.vigener(key))
 print("Origine text vegenere "+crypt.decodeVegener(crypt.vigener(key),key))
-print("Encryption by 2 vegenere "+crypt.encodeVegenere(key))
+
 
 
 
