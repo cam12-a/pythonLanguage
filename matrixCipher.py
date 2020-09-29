@@ -49,16 +49,15 @@ class matrixCipher:
 
     def decodeMatrixCipher(self,textToDecode,codeCipherText):
         cipherText=""
-        self.opentext=textToDecode
         key=np.array(self.key)
         try:
             invKey=LA.inv(key)
         except np.linalg.LinAlgError:
             return "Данная матрица не имеет обратную матрицу"
         B,C=[],[]
-        if(len(self.opentext)%self.matrixSize==0):
-            for i in range(0,len(self.opentext),self.matrixSize):
-                B.append(self.indexofOpenTextinAphabet(self.opentext)[i:self.matrixSize+i])
+        if(len(textToDecode)%self.matrixSize==0):
+            for i in range(0,len(textToDecode),self.matrixSize):
+                B.append(self.indexofOpenTextinAphabet(textToDecode)[i:self.matrixSize+i])
         else:
             return "Невозможно шифровать потому что длина открытого теста и размер матрицы некратны"
         invKey=invKey.tolist()
@@ -73,11 +72,12 @@ class matrixCipher:
         
         return cipherText
 
-    def generateKeyPlayfair(self,opentext):
+    def generateKeyPlayfair(self):
         d=set()
-        self.opentext=opentext
+        #self.opentext=opentext
         #Для удаления повторяющих букв используем множество
-        d={opentext[i] for i in range(len(self.opentext))}
+        print(self.opentext)
+        d={self.opentext[i] for i in range(len(self.opentext))}
         for i in range(32):
             if not(self.alphabet()[i] in d):
                 d.add(self.alphabet()[i])
@@ -115,13 +115,13 @@ class matrixCipher:
             b+=a[i:i+2]+" "
         b=b.split(' ')
         return b
-    def playfair(self,opentext,key):
+    def playfair(self,key):
         textCipher=""
-        self.opentext=opentext.lower()
-        key=self.generateKeyPlayfair(self.opentext)
+        #self.opentext=opentext.lower()
+        #key=self.generateKeyPlayfair(self.opentext)
         #key=[['р','е','с','п','у','б'],['л','и','к','а','в','г'],['д','ж','з','м','н','о'],['т','ф','х','ц','ч','ш'],['щ','ь','ы','э','ю','я']]
         bigram=self.returnBigram(self.opentext)
-        print(key)
+        #print(key)
         b=0
         col=8
         line=4
@@ -173,14 +173,76 @@ class matrixCipher:
                     #textCipher+=key[indexI1][indexJ2%6]+key[indexI2][indexJ1%6]+" "
 
         return textCipher
-    def descriptPlaysir(self,opentext,key):
-        return ""
+    def decodePlaysir(self,opentext,key):
+        textCipher=""
+        self.opentext=opentext.lower()
+        #key=self.generateKeyPlayfair(self.opentext)
+        #key=[['р','е','с','п','у','б'],['л','и','к','а','в','г'],['д','ж','з','м','н','о'],['т','ф','х','ц','ч','ш'],['щ','ь','ы','э','ю','я']]
+        bigram=self.returnBigram(self.opentext)
+        #print(key)
+        b=0
+        col=8
+        line=4
+        for i in range(len(bigram)-1):
+            b=0
+            for j in range(len(key)):
+
+                for k in range(col):
+
+                    if key[j][k]==bigram[i][0]:
+
+                        indexI1,indexJ1=j,k
+                       
+                        b+=1
+                    if key[j][k]==bigram[i][1]:
+
+                        indexI2,indexJ2=j,k
+                        b+=1
+                    if b==2:
+
+                        break
+                if b==2:
+
+                    break       
+            if b==2:
+                if indexI1==indexI2:
+
+                    if indexI2==7:
+                        indexJ2=0
+                    if indexI1==7:
+                        indexJ1=0
+                    indexJ1=indexJ1-1
+                    indexJ2=indexJ2-1
+                    textCipher+=key[indexI1%line][indexJ1%col]+key[indexI1%line][indexJ2%col]+" "
+                if indexJ1==indexJ2:
+                    if indexJ1==7:
+                        indexI1=0
+                    if indexJ2==7:
+                        indexI2=0                
+                    indexI1=indexI1-1
+                    indexI2=indexI2-1
+                    textCipher+=key[indexI1%line][indexJ1%col]+key[indexI2%line][indexJ1%col]+" " 
+                    
+                if indexI1!=indexI2 and indexJ1!=indexJ2:
+                    if indexJ1>indexJ2:
+                        textCipher+=key[indexI1%line][indexJ2%col]+key[indexI2%line][indexJ1%col]+" "
+                    if indexJ2>indexJ1:
+                        textCipher+=key[indexI1%line][indexJ2%col]+key[indexI2%line][indexJ1%col]+" "
+                    #textCipher+=key[indexI1][indexJ2%6]+key[indexI2][indexJ1%6]+" "
+
+        return textCipher
     
        
 matrixSize=3
 key=[[randint(0,31) for i in range(matrixSize)] for i in range(matrixSize)]
-s=matrixCipher("/home/kali/crypto/variant.txt",matrixSize,key)
+s=matrixCipher("/home/kali/crypto/text.txt",matrixSize,key)
 inscrpited=s.matrixCipher()
 print("Encoding text \n",inscrpited[1])
 print("Decoded text\n",s.decodeMatrixCipher(inscrpited[1],inscrpited[0]))
-print("Плейфер ключ ",s.playfair("ПУСТЬКОНСУЛЫБУДУТБДИТЕЛЬНЫ",key))
+key=s.generateKeyPlayfair()
+text=s.playfair(key)
+print("Сгенерированый ключ ",key)
+print("Шифротест методом Плейфера ",text)
+text=text.replace(" ","")
+print(key)
+print("разшифровка методом Плейфера ",s.decodePlaysir(text,key))
