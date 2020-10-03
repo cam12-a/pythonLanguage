@@ -5,8 +5,9 @@ import sys as sys
 import math as mth
 from scipy.signal import argrelextrema
 import numpy as np
-from sympy import diff,symbols,integrate
+from sympy import diff,symbols,integrate,Sum,oo
 from sympy.solvers import solve
+from sympy.abc import k
 class interpol:
     #Конструктор
     def __init__(self,x,y,a,b):
@@ -129,7 +130,9 @@ for i in range(np.size(s.localMax(y_arr))):
 print("Вторая производная и точка перегиба ",s.sdFn(1,2,1e-6))
 print("Площадь фигуры ",s.area())
 print("Нуль функции ",s.zeroofFunction(0,5,1e-9))
-
+#Сумм последовательности
+summ=Sum(((-1)**(k-1))/k,(k,1,oo)).doit()
+print("Сумма последовательности равна ",summ)
 s.drawFn()
 
 #print(s.dFn(0))
