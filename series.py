@@ -37,6 +37,7 @@ print(Sp)
 print(Ss)
 SUM=0
 lessThanZero=0
+#Способ 1
 for i in range(0,300,3):
     if Sp[i]<2.6 and (i*2+1)%2==1:
         lessThanZero+=Sp[i]
@@ -44,3 +45,8 @@ for i in range(0,300,3):
         SUM+=1
 print(SUM)
 print(lessThanZero)
+#Способ  2
+a=pd.Series([Sp[i] for i in range(0,300,3) if Sp[i]<2.6 and ((i*2+1)%2==1)]).sum()
+
+b=Sp[Sp<0].count()
+print(a,b)
