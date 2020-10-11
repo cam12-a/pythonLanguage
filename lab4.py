@@ -1,6 +1,7 @@
 import random
 import io
 import re
+import numpy as np
 def factors(n):
     i = 2
     factors = []
@@ -61,7 +62,7 @@ def permutationEncryption(openText):
     key=random.sample(range(0,len(matrix[0][:])),len(matrix[0][:]))
     ligne=len(matrix[0][:])
     col=len(matrix)
-    print("Permutation ",ligne,col,key,len(openText))
+    #print("Permutation ",ligne,col,key,len(openText))
     textCipher=""
     if generateMatrix(openText)[0]==1:
         for i in range(ligne):
@@ -83,7 +84,7 @@ def decodePermutationEncrypt(textCipher,key):
     col=len(key)
     ligne=len(textCipher)//col
     matrixDecode=dict()
-    print("decode ",ligne,col,key,len(textCipher))
+    #print("decode ",ligne,col,key,len(textCipher))
     for i in range(0,len(textCipher),ligne):
         tempDecodeText+=textCipher[i:i+ligne]+"№"
     tempDecodeText=tempDecodeText.split('№')
@@ -101,11 +102,80 @@ def decodePermutationEncrypt(textCipher,key):
                 decodeText+=matrixDecode.get(j)[i]
                 
     return tempDecodeText,decodeText,matrixDecode
+def grilleCardan(m,k):
+    grilleCardan=[
+    [0, 1, 0, 0, 0, 0, 0, 0, 0, 0],
+    [1, 0, 0, 0, 1, 0, 1, 1, 0, 0],
+    [0, 1, 0, 0, 0, 1, 0, 0, 0, 1],
+    [0, 0, 0, 1, 0, 0, 0, 1, 0, 0],
+    [0, 1, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 1, 0, 0, 1, 1, 0, 0, 1],
+    ]
+    '''[1, 1, 0, 0, 0, 0, 1, 0, 1, 0],
+    [0, 0, 1, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 1, 0, 0, 0, 1, 0],
+    [0, 0, 1, 0, 0, 0, 0, 1, 0, 0]'''
+    return grilleCardan
+def normalizeOpenTextByGrilleCardanSize(textOpen):
+    List=[]
+    a=grilleCardan(1,2)
+    countOneInGrille=(len(a)//2)*len(a[0][:])//2
+    if(len(textOpen)%countOneInGrille!=0):
+        for i in range(len(openText)-1,len(openText)+len(openText)%countOneInGrille,1):
+            textOpen+="#"
+    for i in range(0,len(openText),countOneInGrille):
+        List.append(openText[i:i+countOneInGrille])
+    return List
+def turnCardan(x,size):
+    y=[[0 for i in range(size)] for j in range(len(x))]
+    k=0
+    for i in range(len(x)-1,-1,-1):
+        for j in range(size):
+            y[k][j]=x[i][j]
+        k+=1
+    return y
+def rotate_matrix( m ):
+    return [[m[j][i] for j in range(len(m))] for i in range(len(m[0])-1,-1,-1)]
 
+def Cardan(textOpen):
+    grille=grilleCardan(1,1)
+    size=len(grilleCardan(1,1))
+    matrix=normalizeOpenTextByGrilleCardanSize(openText)
+    mylist=grille.copy()
+    textCipher=""
+    print(matrix)
+    p=0
+    count=0
+    M=[]
+    print(len(grille),len(grille[0][:]))
+    for k in range(4):
+        p=0
+        for i in range(len(grille)):
+            for j in range(len(grille[i][:])):
+                if grille[i][j]==1:
+                    textCipher=matrix[k][p]
+                    mylist[i][j]=matrix[k][p]
+                    #print(p,mylist)
+                    count+=1
+                    p+=1
+        grille=grilleCardan(1,1)
+        grille=rotate_matrix(grille)
+       
+    print(grille)
+    print("roted ",grille)
+    grille=turnCardan(grille,10)
+    print(grille)
+    #print(count)
+    print(textCipher)
+    return mylist
+    
 openText=formatOpenText('/home/kali/crypto/text.txt')
-print(openText)
-openText="путнойперес"
-print(generateMatrix(openText))
+#print(openText)
+openText="дом мой как бы мал ты ни был ты мне кажешься аббатством"
+print("Табличная форма (Матрица) ",generateMatrix(openText)[1])
 permEncrypt=permutationEncryption(openText)
-print(permEncrypt)
-print(decodePermutationEncrypt(permEncrypt[0],permEncrypt[2])[1])
+print("Ключ для ширование ", permEncrypt[2])
+print("Шифрт текст ",permEncrypt[0])
+print("Расшированный текст ",decodePermutationEncrypt(permEncrypt[0],permEncrypt[2])[1])
+
+#print(Cardan(openText))
