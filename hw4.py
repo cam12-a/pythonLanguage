@@ -117,7 +117,7 @@ def sumTarget(nums,target):
                         continue
                     for j in range(len(nums)-1):
                         result=nums[i]+nums[k]+nums[j]
-                        if abs(result-target)<=target:
+                        if abs(result-target)<=abs(target):
                             listToReturn.update({index:str(nums[i])+' '+str(nums[k])+' '+str(nums[j])})
                         index+=1
         return listToReturn
