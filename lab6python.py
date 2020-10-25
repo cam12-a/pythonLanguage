@@ -1,8 +1,8 @@
 import pandas as pd
 import numpy as np
 from random import sample
-def readCsv(fileName):
-    return pd.read_csv(fileName,sep=";")
+def readCsv(fileName,sep):
+    return pd.read_csv(fileName,sep=sep)
 
 def task1(df):
     dataFr=df.sample(100,random_state=242)
@@ -11,19 +11,19 @@ def task1(df):
     return dataFr.loc[dataFr.tr_description.str.lower().str.contains('плата')].count()[1]/len(dataFr)
 
 def task2(df):
-    countTransaction=df.groupby('tr_description').tr_type.nunique()
-    L=['Выдача наличных в АТМ Сбербанк России','Комиссия за обслуживание ссудного счета',
-    'Списание по требованию ','Оплата услуги. Банкоматы СБ РФ','Погашение кредита (в пределах одного филиала)',
-    'Покупка. POS ТУ СБ РФ']
-    #TransCheck=countTransaction['tr_type'].apply(lambda x: L in x)
-    
-    return countTransaction['tr_type']
+    countTransaction=df.groupby(by='tr_description',as_index=False).agg({'tr_type':pd.Series.nunique}).sort_values(by='tr_type',ascending=False)
+    return countTransaction
 
-df=readCsv("C:/Users/camar/OneDrive/Desktop/Master/Crypto/Crypto-master/Crypto-master/tr_types.csv")
-#print(df[0:50])
-print(task2(df))
+def task3(df):
+    groupBYCustomerID=df.groupby(by=['customer_id','amount'],as_index=False)
+    #groupBYCustomerID=
+    return groupBYCustomerID.first()
+#df=readCsv("/home/kali/dataLearg/tr_types.csv",";")
+#print(task2(df))
+#df=readCsv("/home/kali/dataLearning/transactions.csv",",")
+df=pd.read_csv("/home/kali/dataLearning/transactions.csv",sep=",",index_col='customer_id')
+#print(df[0:5])
+print(task3(df))
 #print(task1(df))
 
 #print(f"{task1(df):.2f}")
-
-
