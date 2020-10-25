@@ -15,14 +15,28 @@ def task2(df):
     return countTransaction
 
 def task3(df):
-    groupBYCustomerID=df.groupby(by=['customer_id','amount'],as_index=False)
-    #groupBYCustomerID=
-    return groupBYCustomerID.first()
+    maxElement,indexMaxElement=df['amount'].max(),df['amount'].idxmax()
+    benefit,perte=0,0
+    text=""
+    for index,row in df.iterrows():
+        if index==indexMaxElement:
+            if row['amount']<0:
+                perte+=1
+            else:
+                benefit+=1
+    if benefit>perte:
+        countItem=benefit
+        text="Приход больше"
+    else:
+        countItem=perte
+        text="расход больше"
+    #countItem= df['amount'][0:15]
+    return [maxElement,indexMaxElement,countItem,text]
 #df=readCsv("/home/kali/dataLearg/tr_types.csv",";")
 #print(task2(df))
 #df=readCsv("/home/kali/dataLearning/transactions.csv",",")
 df=pd.read_csv("/home/kali/dataLearning/transactions.csv",sep=",",index_col='customer_id')
-#print(df[0:5])
+print(df)
 print(task3(df))
 #print(task1(df))
 
