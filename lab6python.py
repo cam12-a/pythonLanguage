@@ -32,12 +32,22 @@ def task3(df):
         text="расход больше"
     #countItem= df['amount'][0:15]
     return [maxElement,indexMaxElement,countItem,text]
+def task4(df):
+    myabsolute=pd.DataFrame(abs(df['amount']-df['amount'].median()),columns=['amount'])
+    mdian=abs(df['amount']-df['amount'].median()).median()
+    mdianNotNan=myabsolute['amount'].median(skipna=True)
+    deleteDupl=df.drop_duplicates(subset=['mcc_code','tr_type'],keep='last').sort_values(by='amount',ascending=True)
+    medAfterDeleteDupl=abs(deleteDupl['amount']-deleteDupl['amount'].median(skipna=True)).median(skipna=True)
+
+    return [mdian,mdianNotNan,medAfterDeleteDupl]
+
 #df=readCsv("/home/kali/dataLearg/tr_types.csv",";")
 #print(task2(df))
 #df=readCsv("/home/kali/dataLearning/transactions.csv",",")
 df=pd.read_csv("/home/kali/dataLearning/transactions.csv",sep=",",index_col='customer_id')
-print(df)
-print(task3(df))
+#print(df)
+#print(task3(df))
 #print(task1(df))
+print(task4(df))
 
 #print(f"{task1(df):.2f}")
