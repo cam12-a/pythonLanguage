@@ -57,8 +57,9 @@ def lenearModel(xTrain,yTrain,xTest,yTest):
     #model=LinearRegression()
     model.fit(xTrain,yTrain)
     scp=model.score(xTrain,yTrain)
-    #pre= model.predict(xTest)
+    pre= model.predict(xTest)
     print("Train ",scp )
+    print("Средняя ош\n",np.abs(pre-yTest))
     testModel(model)
     #print("Train ",model.score(xTrain,yTrain))
     #print("Text ",model.score(xTest,yTest))
@@ -67,6 +68,7 @@ def testModel(model,age=70,default=0,balance=4572,housing=0,loan=0,day=11,durati
     individual=np.array([age,default,balance,housing,loan,day,duration,compaign,pdays,previous]).reshape(1,10)
     print(model.predict(individual))
     #print(model.predict_proba(individual))
+
 myModel=deleteToTestAndTarget()
 lenearModel(myModel[0],myModel[2],myModel[1],myModel[3])
 
